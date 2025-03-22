@@ -136,22 +136,17 @@
                         </span>
                     </div>
                     <div class="eb-product-price-container">
-                        ${isDiscounted ? `
-                            <div class="eb-price-wrapper">
-                                <div class="eb-discount-info">
+                        <div class="eb-price-wrapper">
+                            <div class="eb-discount-info">
+                                ${isDiscounted ? `
                                     <span class="eb-product-original-price">${originalPrice.toFixed(2)} TL</span>
                                     <span class="eb-discount-badge">%${discountAmount}</span>
-                                </div>
-                                <span class="eb-product-price">${price.toFixed(2)} TL</span>
+                                ` : `
+                                    <span style="visibility: hidden;">&nbsp;</span>
+                                `}
                             </div>
-                        ` : `
-                            <div class="eb-price-wrapper">
-                                <div class="eb-discount-info" style="visibility: hidden; height: 22px;">
-                                    <span>&nbsp;</span>
-                                </div>
-                                <span class="eb-product-price eb-regular-price">${price.toFixed(2)} TL</span>
-                            </div>
-                        `}
+                            <span class="eb-product-price ${!isDiscounted ? 'eb-regular-price' : ''}">${price.toFixed(2)} TL</span>
+                        </div>
                     </div>
                 </a>
                 <button class="eb-add-to-cart-button">Sepete Ekle</button>
@@ -179,6 +174,7 @@
         
         const carouselContainer = document.createElement('div');
         carouselContainer.className = 'eb-custom-carousel-container';
+        carouselContainer.style.position = 'relative';
         
         const titleContainer = document.createElement('div');
         titleContainer.className = 'eb-carousel-title-container';
@@ -220,12 +216,12 @@
             productShelf.appendChild(productCard);
         });
         
-        carousel.appendChild(prevButton);
         carousel.appendChild(productShelf);
-        carousel.appendChild(nextButton);
         
         carouselContainer.appendChild(titleContainer);
+        carouselContainer.appendChild(prevButton);
         carouselContainer.appendChild(carousel);
+        carouselContainer.appendChild(nextButton);
         
         const spacerDiv = document.createElement('div');
         spacerDiv.className = 'eb-carousel-bottom-spacer';
@@ -234,9 +230,7 @@
         
         if (bannerTitles) {
             bannerTitles.parentNode.insertBefore(carouselContainer, bannerTitles);
-            
             bannerTitles.parentNode.insertBefore(spacerDiv, bannerTitles);
-            
             console.log("Carousel banner__titles elementinin üstüne yerleştirildi");
         } else {
             console.warn("banner__titles sınıfı bulunamadı, alternatif hedefler deneniyor");
@@ -287,9 +281,8 @@
             .eb-custom-carousel-container {
                 max-width: 1200px;
                 margin: 40px auto;
-                padding: 0 15px;
                 font-family: Poppins, "cursive", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-                clear: both;
+                position: relative;
             }
             
             .eb-carousel-title-container {
@@ -312,15 +305,14 @@
             }
             
             .eb-product-carousel {
-                position: relative;
                 overflow: hidden;
-                margin: 0 -15px;
-                padding: 0 15px;
+                margin: 0 50px;
+                padding: 0;
             }
             
             .eb-owl-stage {
                 display: flex;
-                transition: transform 0.7s cubic-bezier(0.33, 1, 0.68, 1);
+                transition: transform 0.3s ease-out;
             }
             
             .eb-owl-item {
@@ -379,13 +371,12 @@
             
             .eb-discount-badge {
                 display: inline-block;
-                margin-left: 8px;
-                background: #00A365;
-                color: white;
+                background: white;
+                color:  #00A365;
                 border-radius: 4px;
                 padding: 2px 6px;
-                font-size: 12px;
-                font-weight: 600;
+                font-size: 18px;
+                font-weight: 700;
             }
             
             .eb-favorite-button {
@@ -436,16 +427,18 @@
             }
             
             .eb-product-link {
-                display: block;
-                padding: 0 17px 17px;
+                display: flex;
+                flex-direction: column;
+                padding: 0 17px;
                 color: inherit;
                 text-decoration: none;
                 flex-grow: 1;
+                height: 180px;
             }
             
             .eb-product-info {
-                padding-top: 17px;
-                margin-bottom: 10px;
+                height: 65px;
+                overflow: hidden;
             }
             
             .eb-product-title {
@@ -459,7 +452,7 @@
                 display: -webkit-box;
                 -webkit-line-clamp: 3;
                 -webkit-box-orient: vertical;
-                height: 70px; 
+                max-height: 90px;
             }
             
             .eb-product-brand {
@@ -470,25 +463,30 @@
             .eb-product-price-container {
                 display: flex;
                 flex-direction: column;
-                margin-top: 10px;
-                min-height: 60px;
+                height: 45px;
+                margin-top: 0;
+                margin-bottom: 30px;
             }
             
             .eb-price-wrapper {
                 display: flex;
                 flex-direction: column;
+                width: 100%;
             }
             
             .eb-discount-info {
                 display: flex;
                 align-items: center;
-                margin-bottom: 4px;
+                margin-bottom: 5px;
+                height: 22px;
             }
             
             .eb-product-price {
-                font-size: 18px;
-                font-weight: 700;
+                font-size: 21.12px;
+                font-weight: 600;
                 color: #00A365;
+                line-height: 1.2;
+                height: 25px;
             }
             
             .eb-regular-price {
@@ -496,9 +494,10 @@
             }
             
             .eb-product-original-price {
-                font-size: 14px;
+                font-size: 13.44px;
                 text-decoration: line-through;
                 color: #7D7D7D;
+                margin-right: 6px;
             }
             
             .eb-add-to-cart-button {
@@ -526,37 +525,38 @@
                 position: absolute;
                 top: 50%;
                 transform: translateY(-50%);
-                width: 40px;
-                height: 40px;
-                background: white;
+                width: 48px;
+                height: 48px;
+                background-color: #fff7ec;
                 border: none;
                 border-radius: 50%;
                 box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
                 cursor: pointer;
-                z-index: 2;
+                z-index: 10;
                 display: flex;
                 align-items: center;
                 justify-content: center;
                 transition: all 0.3s ease;
+                color: #f28e00;
             }
             
             .eb-carousel-arrow:hover {
-                background: #f8f8f8;
-                box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+                background-color: #fff;
+                color: #f28e00;
             }
             
             .eb-carousel-prev {
-                left: 10px;
+                left: -80px;
             }
             
             .eb-carousel-next {
-                right: 10px;
+                right: -80px;
             }
             
             .eb-carousel-arrow svg {
-                width: 24px;
-                height: 24px;
-                fill: #555;
+                width: 34px;
+                height: 34px;
+                fill: currentColor;
             }
             
             @media (max-width: 1200px) {
@@ -662,7 +662,7 @@
             
             const updateCarouselPosition = () => {
                 setTimeout(() => {
-                    productShelf.style.transition = `transform 0.7s cubic-bezier(0.33, 1, 0.68, 1)`;
+                    productShelf.style.transition = `transform 0.3s ease-out`;
                     productShelf.style.transform = `translate3d(-${currentIndex * cardWidth}px, 0px, 0px)`;
                 }, 10);
             };
