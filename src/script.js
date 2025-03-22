@@ -12,11 +12,17 @@
         window.location.pathname === "/home";
     };
     
+    let initialized = false;
+
     const init = () => {
+        if (initialized) return;
+        
         if (!isHomePage()) {
             console.log("wrong page");
             return;
         }
+
+        initialized = true;
         
         loadFavorites();
         
@@ -172,6 +178,9 @@
         if (existingCarousel) {
             existingCarousel.remove();
         }
+
+        const existingSpacers = document.querySelectorAll('.eb-carousel-bottom-spacer');
+        existingSpacers.forEach(spacer => spacer.remove());
         
         const carouselContainer = document.createElement('div');
         carouselContainer.className = 'eb-custom-carousel-container';
@@ -226,6 +235,7 @@
         
         const spacerDiv = document.createElement('div');
         spacerDiv.className = 'eb-carousel-bottom-spacer';
+        spacerDiv.id = 'eb-unique-spacer'; 
         
         const bannerTitles = document.querySelector('.banner__titles');
         
