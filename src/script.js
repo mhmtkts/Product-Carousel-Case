@@ -571,7 +571,7 @@
                 width: 48px;
                 height: 48px;
                 background-color: #fff7ec;
-                border: none;
+                border: 1px solid transparent;
                 border-radius: 50%;
                 box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
                 cursor: pointer;
@@ -586,6 +586,7 @@
             .eb-carousel-arrow:hover {
                 background-color: #fff;
                 color: #f28e00;
+                border: 1px solid #f28e00;
             }
             
             .eb-carousel-prev {
