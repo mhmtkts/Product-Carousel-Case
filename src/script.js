@@ -324,7 +324,6 @@
             
             .eb-product-carousel {
                 overflow: hidden;
-                margin: 0 50px;
                 padding: 0;
             }
             
