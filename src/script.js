@@ -298,9 +298,14 @@
             
             .eb-carousel-title-container {
                 display: flex;
-                justify-content: space-between;
                 align-items: center;
-                margin-bottom: 20px;
+                justify-content: space-between;
+                background-color: #fef6eb;
+                padding: 25px 67px;
+                border-top-left-radius: 35px;
+                border-top-right-radius: 35px;
+                font-family: Quicksand-Bold;
+                font-weight: 700;
             }
             
             .eb-carousel-title-wrapper {
@@ -309,9 +314,11 @@
             }
             
             .eb-carousel-title {
-                font-size: 22px;
-                font-weight: 600;
-                color: #333;
+                font-family: Quicksand-Bold;
+                font-size: 3rem;
+                font-weight: 700;
+                line-height: 1.11;
+                color: #f28e00;
                 margin: 0;
             }
             
@@ -323,7 +330,7 @@
             
             .eb-owl-stage {
                 display: flex;
-                transition: transform 0.3s ease-out;
+                transition: transform 0.20s ease-out;
             }
             
             .eb-owl-item {
@@ -698,9 +705,9 @@
             
             const updateCarouselPosition = () => {
                 setTimeout(() => {
-                    productShelf.style.transition = `transform 0.3s ease-out`;
+                    productShelf.style.transition = `transform 0.20s ease-out`;
                     productShelf.style.transform = `translate3d(-${currentIndex * cardWidth}px, 0px, 0px)`;
-                }, 10);
+                });
             };
             
             const updateButtonStates = () => {
@@ -743,7 +750,7 @@
             
             button.addEventListener('click', (e) => {
                 e.preventDefault();
-                e.stopPropagation(); // Link'in çalışmasını önle
+                e.stopPropagation();
                 
                 const productCard = button.closest('.eb-product-card');
                 if (!productCard) return;
@@ -759,7 +766,7 @@
         addToCartButtons.forEach(button => {
             button.addEventListener('click', (e) => {
                 e.preventDefault();
-                e.stopPropagation(); // Link'in çalışmasını önle
+                e.stopPropagation();
                 
                 const productCard = button.closest('.eb-product-card');
                 if (!productCard) return;
