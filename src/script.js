@@ -6,7 +6,10 @@
     let favorites = [];
     
     const isHomePage = () => {
-        return window.location.pathname === "/" || window.location.pathname.includes("index") || window.location.href.includes("e-bebek.com");
+        return window.location.pathname === "/" || 
+        window.location.pathname === "/index.html" || 
+        window.location.pathname === "/index.php" ||
+        window.location.pathname === "/home";
     };
     
     const init = () => {
@@ -84,8 +87,9 @@
     const buildCarousel = () => {
         buildHTML();
         buildCSS();
+        setEvents();
     };
-    
+
     const createProductCard = (product, index) => {
         try {
             const id = product.id ? product.id : Math.floor(Math.random() * 10000);
@@ -138,7 +142,12 @@
                                 <span class="eb-product-price">${price.toFixed(2)} TL</span>
                             </div>
                         ` : `
-                            <span class="eb-product-price eb-regular-price">${price.toFixed(2)} TL</span>
+                            <div class="eb-price-wrapper">
+                                <div class="eb-discount-info" style="visibility: hidden; height: 22px;">
+                                    <span>&nbsp;</span>
+                                </div>
+                                <span class="eb-product-price eb-regular-price">${price.toFixed(2)} TL</span>
+                            </div>
                         `}
                     </div>
                 </a>
@@ -194,7 +203,7 @@
         
         const productShelf = document.createElement('div');
         productShelf.className = 'eb-owl-stage';
-        productShelf.style.width = (products.length * 292.5) + 'px'; // 272.5px ürün genişliği + 20px sağ margin
+        productShelf.style.width = (products.length * 292.5) + 'px';
         productShelf.style.transform = 'translate3d(0px, 0px, 0px)';
         productShelf.style.transition = 'all 0s ease 0s';
         
@@ -225,7 +234,7 @@
             
             bannerTitles.parentNode.insertBefore(spacerDiv, bannerTitles);
             
-            console.log("Karüsel banner__titles elementinin üstüne yerleştirildi");
+            console.log("Carousel banner__titles elementinin üstüne yerleştirildi");
         } else {
             console.warn("banner__titles sınıfı bulunamadı, alternatif hedefler deneniyor");
             
@@ -308,7 +317,7 @@
             
             .eb-owl-stage {
                 display: flex;
-                transition: transform 0.5s ease;
+                transition: transform 0.7s cubic-bezier(0.33, 1, 0.68, 1);
             }
             
             .eb-owl-item {
@@ -335,10 +344,6 @@
             .eb-product-card:hover {
                 border-color: #F28E00;
                 border-width: 3px;
-            }
-            
-            .eb-product-card.favorite-active {
-                border-color: #F28E00;
             }
             
             .eb-product-image-container {
@@ -397,9 +402,15 @@
                 box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
             }
             
-            .eb-favorite-button .favorite-icon {
+            .eb-favorite-button img {
                 width: 25px;
                 height: 25px;
+            }
+            
+            .eb-favorite-button:hover img,
+            .eb-favorite-button.favorite-active img {
+                width: 50px;
+                height: 50px;
             }
             
             .eb-product-link {
@@ -412,20 +423,21 @@
             
             .eb-product-info {
                 padding-top: 17px;
-                margin-bottom: 5px;
+                margin-bottom: 10px;
             }
             
             .eb-product-title {
-                font-size: 14px;
-                color: #333;
+                font-size: 1.2rem;
+                color: #7D7D7D;
                 font-weight: 500;
                 line-height: 1.222222;
                 display: block;
                 overflow: hidden;
                 text-overflow: ellipsis;
                 display: -webkit-box;
-                -webkit-line-clamp: 2;
+                -webkit-line-clamp: 3;
                 -webkit-box-orient: vertical;
+                height: 70px; 
             }
             
             .eb-product-brand {
@@ -437,6 +449,7 @@
                 display: flex;
                 flex-direction: column;
                 margin-top: 10px;
+                min-height: 60px;
             }
             
             .eb-price-wrapper {
@@ -524,7 +537,6 @@
                 fill: #555;
             }
             
-            /* Responsive tasarım - yalnızca görünür ürün sayısını değiştirir, kart boyutlarını değil */
             @media (max-width: 1200px) {
                 .eb-custom-carousel-container {
                     max-width: 900px;
@@ -571,6 +583,168 @@
             styleElement.textContent = css;
             document.head.appendChild(styleElement);
         }
+    };
+    
+    const getVisibleCardsCount = () => {
+        const windowWidth = window.innerWidth;
+        
+        if (windowWidth >= 1200) {
+            return 4;
+        } else if (windowWidth >= 992) {
+            return 3;
+        } else if (windowWidth >= 768) {
+            return 2;
+        } else {
+            return 1;
+        }
+    };
+    
+    const setEvents = () => {
+        const prevButton = document.querySelector('.eb-carousel-prev');
+        const nextButton = document.querySelector('.eb-carousel-next');
+        const productShelf = document.querySelector('.eb-owl-stage');
+        
+        if (prevButton && nextButton && productShelf) {
+            let currentIndex = 0;
+            
+            const firstCard = document.querySelector('.eb-owl-item');
+            if (!firstCard) {
+                console.warn("Ürün kartı bulunamadı");
+                return;
+            }
+            
+            const cardWidth = firstCard.offsetWidth + 20;
+            let visibleCards = getVisibleCardsCount();
+            let maxIndex = Math.max(0, products.length - visibleCards);
+            
+            prevButton.style.opacity = '0.5';
+            prevButton.style.pointerEvents = 'none';
+            
+            prevButton.addEventListener('click', () => {
+                if (currentIndex > 0) {
+                    currentIndex--;
+                    updateCarouselPosition();
+                }
+                
+                updateButtonStates();
+            });
+            
+            nextButton.addEventListener('click', () => {
+                if (currentIndex < maxIndex) {
+                    currentIndex++;
+                    updateCarouselPosition();
+                }
+                
+                updateButtonStates();
+            });
+            
+            const updateCarouselPosition = () => {
+                setTimeout(() => {
+                    productShelf.style.transition = `transform 0.7s cubic-bezier(0.33, 1, 0.68, 1)`;
+                    productShelf.style.transform = `translate3d(-${currentIndex * cardWidth}px, 0px, 0px)`;
+                }, 10);
+            };
+            
+            const updateButtonStates = () => {
+                prevButton.style.opacity = currentIndex === 0 ? '0.5' : '1';
+                prevButton.style.pointerEvents = currentIndex === 0 ? 'none' : 'auto';
+                
+                nextButton.style.opacity = currentIndex === maxIndex ? '0.5' : '1';
+                nextButton.style.pointerEvents = currentIndex === maxIndex ? 'none' : 'auto';
+            };
+            
+            window.addEventListener('resize', () => {
+                const newVisibleCards = getVisibleCardsCount();
+                const newMaxIndex = Math.max(0, products.length - newVisibleCards);
+                
+                if (currentIndex > newMaxIndex) {
+                    currentIndex = newMaxIndex;
+                    updateCarouselPosition();
+                }
+                
+                maxIndex = newMaxIndex;
+                updateButtonStates();
+            });
+        }
+        
+        const favoriteButtons = document.querySelectorAll('.eb-favorite-button');
+        favoriteButtons.forEach(button => {
+            const favoriteIcon = button.querySelector('.favorite-icon');
+            
+            button.addEventListener('mouseenter', () => {
+                if (!button.classList.contains('favorite-active')) {
+                    favoriteIcon.src = 'https://www.e-bebek.com/assets/svg/default-hover-favorite.svg';
+                }
+            });
+            
+            button.addEventListener('mouseleave', () => {
+                if (!button.classList.contains('favorite-active')) {
+                    favoriteIcon.src = 'https://www.e-bebek.com/assets/svg/default-favorite.svg';
+                }
+            });
+            
+            button.addEventListener('click', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                
+                const productCard = button.closest('.eb-product-card');
+                if (!productCard) return;
+                
+                const productId = parseInt(productCard.dataset.productId, 10);
+                if (isNaN(productId)) return;
+                
+                toggleFavorite(productId, button, productCard, favoriteIcon);
+            });
+        });
+        
+        const addToCartButtons = document.querySelectorAll('.eb-add-to-cart-button');
+        addToCartButtons.forEach(button => {
+            button.addEventListener('click', (e) => {
+                e.preventDefault();
+                
+                const productCard = button.closest('.eb-product-card');
+                if (!productCard) return;
+                
+                const productId = parseInt(productCard.dataset.productId, 10);
+                if (isNaN(productId)) return;
+                
+                const product = products.find(p => p.id === productId);
+                if (!product) return;
+                
+                console.log(`"${product.name}" sepete eklendi!`);
+                alert(`"${product.name}" sepete eklendi!`);
+            });
+        });
+    };
+
+    const toggleFavorite = (productId, button, productCard, favoriteIcon) => {
+        const id = parseInt(productId, 10);
+        
+        const index = favorites.findIndex(favId => favId === id);
+        
+        if (index === -1) {
+            favorites.push(id);
+            button.classList.add('favorite-active');
+            if (productCard) {
+                productCard.classList.add('favorite-active');
+            }
+            if (favoriteIcon) {
+                favoriteIcon.src = 'https://www.e-bebek.com/assets/svg/default-hover-favorite.svg';
+            }
+            console.log(`Ürün ID: ${id} favorilere eklendi`);
+        } else {
+            favorites.splice(index, 1);
+            button.classList.remove('favorite-active');
+            if (productCard) {
+                productCard.classList.remove('favorite-active');
+            }
+            if (favoriteIcon) {
+                favoriteIcon.src = 'https://www.e-bebek.com/assets/svg/default-favorite.svg';
+            }
+            console.log(`Ürün ID: ${id} favorilerden çıkarıldı`);
+        }
+        
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(favorites));
     };
     
     init();
