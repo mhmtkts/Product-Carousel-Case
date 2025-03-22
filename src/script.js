@@ -115,17 +115,20 @@
             card.dataset.productId = id;
             
             card.innerHTML = `
-                <div class="eb-product-image-container">
-                    <img class="eb-product-image" src="${img}" alt="${name}">
-                    <div class="eb-bestseller-tag">
-                        <img src="https://www.e-bebek.com/assets/images/cok-satan@2x.png" alt="Çok Satan">
-                    </div>
-                    <button class="eb-favorite-button ${isFavorite ? 'favorite-active' : ''}">
-                        <img src="${isFavorite ? 'https://www.e-bebek.com/assets/svg/default-hover-favorite.svg' : 'https://www.e-bebek.com/assets/svg/default-favorite.svg'}" 
-                            alt="Favorilere Ekle" 
-                            class="favorite-icon">
-                    </button>
+            <div class="eb-product-image-container">
+                <img class="eb-product-image" src="${img}" alt="${name}">
+                <div class="eb-bestseller-tag">
+                    <img src="https://www.e-bebek.com/assets/images/cok-satan@2x.png" alt="Çok Satan">
                 </div>
+                <button class="eb-favorite-button ${isFavorite ? 'favorite-active' : ''}">
+                    <img src="${isFavorite ? 'https://www.e-bebek.com/assets/svg/default-hover-favorite.svg' : 'https://www.e-bebek.com/assets/svg/default-favorite.svg'}" 
+                        alt="Favorilere Ekle" 
+                        class="favorite-icon">
+                    <svg class="heart-svg" viewBox="0 0 24 24" width="25" height="25">
+                        <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" fill="#F28E00"/>
+                    </svg>
+                </button>
+            </div>
                 <a href="${url}" class="eb-product-link" target="_blank">
                     <div class="eb-product-info">
                         <span class="eb-product-title">
@@ -346,6 +349,7 @@
                 border-width: 3px;
             }
             
+            
             .eb-product-image-container {
                 position: relative;
                 width: 272.5px;
@@ -411,6 +415,24 @@
             .eb-favorite-button.favorite-active img {
                 width: 50px;
                 height: 50px;
+            }
+
+            .eb-favorite-button.favorite-active img {
+                display: none;
+            }
+
+            .eb-favorite-button .heart-svg {
+                position: absolute;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+                width: 25px;
+                height: 25px;
+                display: none;
+            }
+            
+            .eb-favorite-button.favorite-active .heart-svg {
+                display: block;
             }
             
             .eb-product-link {
@@ -719,7 +741,6 @@
 
     const toggleFavorite = (productId, button, productCard, favoriteIcon) => {
         const id = parseInt(productId, 10);
-        
         const index = favorites.findIndex(favId => favId === id);
         
         if (index === -1) {
@@ -728,18 +749,12 @@
             if (productCard) {
                 productCard.classList.add('favorite-active');
             }
-            if (favoriteIcon) {
-                favoriteIcon.src = 'https://www.e-bebek.com/assets/svg/default-hover-favorite.svg';
-            }
             console.log(`Ürün ID: ${id} favorilere eklendi`);
         } else {
             favorites.splice(index, 1);
             button.classList.remove('favorite-active');
             if (productCard) {
                 productCard.classList.remove('favorite-active');
-            }
-            if (favoriteIcon) {
-                favoriteIcon.src = 'https://www.e-bebek.com/assets/svg/default-favorite.svg';
             }
             console.log(`Ürün ID: ${id} favorilerden çıkarıldı`);
         }
