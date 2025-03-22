@@ -86,6 +86,79 @@
         buildCSS();
     };
     
+    const createProductCard = (product, index) => {
+        try {
+            const id = product.id ? product.id : Math.floor(Math.random() * 10000);
+            const brand = product.brand || "";
+            const name = product.name || "Ürün Adı";
+            const url = product.url || "#";
+            const img = product.img || "https://via.placeholder.com/150";
+            const price = typeof product.price !== 'undefined' ? product.price : 0;
+            const originalPrice = typeof product.original_price !== 'undefined' ? product.original_price : price;
+            
+            const isDiscounted = price !== originalPrice;
+            const discountAmount = isDiscounted ? Math.round(100 - (price * 100 / originalPrice)) : 0;
+            
+            const isFavorite = favorites.includes(id);
+            
+            const itemElement = document.createElement('div');
+            itemElement.className = 'eb-owl-item active';
+            itemElement.style.width = '272.5px';
+            itemElement.style.marginRight = '20px';
+            
+            const card = document.createElement('div');
+            card.className = `eb-product-card ${isFavorite ? 'favorite-active' : ''}`;
+            card.dataset.productId = id;
+            
+            card.innerHTML = `
+                <div class="eb-product-image-container">
+                    <img class="eb-product-image" src="${img}" alt="${name}">
+                    <div class="eb-bestseller-tag">
+                        <img src="https://www.e-bebek.com/assets/images/cok-satan@2x.png" alt="Çok Satan">
+                    </div>
+                    <button class="eb-favorite-button ${isFavorite ? 'favorite-active' : ''}">
+                        <img src="${isFavorite ? 'https://www.e-bebek.com/assets/svg/default-hover-favorite.svg' : 'https://www.e-bebek.com/assets/svg/default-favorite.svg'}" 
+                            alt="Favorilere Ekle" 
+                            class="favorite-icon">
+                    </button>
+                </div>
+                <a href="${url}" class="eb-product-link" target="_blank">
+                    <div class="eb-product-info">
+                        <span class="eb-product-title">
+                            <span class="eb-product-brand">${brand}</span> - ${name}
+                        </span>
+                    </div>
+                    <div class="eb-product-price-container">
+                        ${isDiscounted ? `
+                            <div class="eb-price-wrapper">
+                                <div class="eb-discount-info">
+                                    <span class="eb-product-original-price">${originalPrice.toFixed(2)} TL</span>
+                                    <span class="eb-discount-badge">%${discountAmount}</span>
+                                </div>
+                                <span class="eb-product-price">${price.toFixed(2)} TL</span>
+                            </div>
+                        ` : `
+                            <div class="eb-price-wrapper">
+                                <div class="eb-discount-info" style="visibility: hidden; height: 22px;">
+                                    <span>&nbsp;</span>
+                                </div>
+                                <span class="eb-product-price eb-regular-price">${price.toFixed(2)} TL</span>
+                            </div>
+                        `}
+                    </div>
+                </a>
+                <button class="eb-add-to-cart-button">Sepete Ekle</button>
+            `;
+            
+            itemElement.appendChild(card);
+            
+            return itemElement;
+        } catch (error) {
+            console.error("Ürün kartı oluşturulurken hata:", error, product);
+            return document.createElement('div');
+        }
+    };
+    
     const buildHTML = () => {
         if (!products || products.length === 0) {
             console.error("Ürünler bulunamadı veya boş");
@@ -126,9 +199,19 @@
         
         const productShelf = document.createElement('div');
         productShelf.className = 'eb-owl-stage';
-        productShelf.style.width = (products.length * 292.5) + 'px'; // 272.5px ürün genişliği + 20px sağ margin
+        productShelf.style.width = (products.length * 292.5) + 'px';
         productShelf.style.transform = 'translate3d(0px, 0px, 0px)';
         productShelf.style.transition = 'all 0s ease 0s';
+        
+        products.forEach((product, index) => {
+            if (!product || typeof product !== 'object') {
+                console.warn("Geçersiz ürün formatı:", product);
+                return;
+            }
+            
+            const productCard = createProductCard(product, index);
+            productShelf.appendChild(productCard);
+        });
         
         carousel.appendChild(prevButton);
         carousel.appendChild(productShelf);
@@ -150,8 +233,33 @@
             console.log("Karüsel banner__titles elementinin üstüne yerleştirildi");
         } else {
             console.warn("banner__titles sınıfı bulunamadı, alternatif hedefler deneniyor");
-            document.body.appendChild(carouselContainer);
-            document.body.appendChild(spacerDiv);
+            
+            const alternativeTargets = [
+                '.banner-bg',
+                '.container',
+                '.main-content',
+                'main',
+                'body'
+            ];
+            
+            let targetFound = false;
+            
+            for (const targetSelector of alternativeTargets) {
+                const target = document.querySelector(targetSelector);
+                if (target) {
+                    target.parentNode.insertBefore(carouselContainer, target);
+                    target.parentNode.insertBefore(spacerDiv, target);
+                    console.log(`Carousel ${targetSelector} elementinin üstüne yerleştirildi`);
+                    targetFound = true;
+                    break;
+                }
+            }
+            
+            if (!targetFound) {
+                document.body.appendChild(carouselContainer);
+                document.body.appendChild(spacerDiv);
+                console.warn("Hiçbir hedef element bulunamadı, doğrudan body'ye eklendi");
+            }
         }
     };
     
