@@ -115,6 +115,7 @@
             card.dataset.productId = id;
             
             card.innerHTML = `
+            <a href="${url}" class="eb-product-full-link" target="_blank"></a>
             <div class="eb-product-image-container">
                 <img class="eb-product-image" src="${img}" alt="${name}">
                 <div class="eb-bestseller-tag">
@@ -129,27 +130,27 @@
                     </svg>
                 </button>
             </div>
-                <a href="${url}" class="eb-product-link" target="_blank">
-                    <div class="eb-product-info">
-                        <span class="eb-product-title">
-                            <span class="eb-product-brand">${brand}</span> - ${name}
-                        </span>
-                    </div>
-                    <div class="eb-product-price-container">
-                        <div class="eb-price-wrapper">
-                            <div class="eb-discount-info">
-                                ${isDiscounted ? `
-                                    <span class="eb-product-original-price">${originalPrice.toFixed(2)} TL</span>
-                                    <span class="eb-discount-badge">%${discountAmount}</span>
-                                ` : `
-                                    <span style="visibility: hidden;">&nbsp;</span>
-                                `}
-                            </div>
-                            <span class="eb-product-price ${!isDiscounted ? 'eb-regular-price' : ''}">${price.toFixed(2)} TL</span>
+            <div class="eb-product-content">
+                <div class="eb-product-info">
+                    <span class="eb-product-title">
+                        <span class="eb-product-brand">${brand}</span> - ${name}
+                    </span>
+                </div>
+                <div class="eb-product-price-container">
+                    <div class="eb-price-wrapper">
+                        <div class="eb-discount-info">
+                            ${isDiscounted ? `
+                                <span class="eb-product-original-price">${originalPrice.toFixed(2)} TL</span>
+                                <span class="eb-discount-badge">%${discountAmount}</span>
+                            ` : `
+                                <span style="visibility: hidden;">&nbsp;</span>
+                            `}
                         </div>
+                        <span class="eb-product-price ${!isDiscounted ? 'eb-regular-price' : ''}">${price.toFixed(2)} TL</span>
                     </div>
-                </a>
-                <button class="eb-add-to-cart-button">Sepete Ekle</button>
+                </div>
+            </div>
+            <button class="eb-add-to-cart-button">Sepete Ekle</button>
             `;
             
             itemElement.appendChild(card);
@@ -335,6 +336,16 @@
                 display: flex;
                 flex-direction: column;
             }
+
+            .eb-product-full-link {
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                z-index: 1;
+            }
+
             
             .eb-product-card:hover {
                 border-color: #F28E00;
@@ -350,7 +361,7 @@
             }
             
             .eb-product-image {
-                width: 100%;
+                width: 100% !important;
                 height: 100%;
                 object-fit: contain;
             }
@@ -425,6 +436,19 @@
             .eb-favorite-button.favorite-active .heart-svg {
                 display: block;
             }
+
+            .eb-favorite-button, 
+            .eb-add-to-cart-button {
+                z-index: 2;
+            }
+
+            .eb-product-content {
+                padding: 0 17px;
+                flex-grow: 1;
+                display: flex;
+                flex-direction: column;
+                height: 180px;
+            }
             
             .eb-product-link {
                 display: flex;
@@ -437,8 +461,10 @@
             }
             
             .eb-product-info {
-                height: 65px;
+                padding-top: 17px;
+                height: 65px; 
                 overflow: hidden;
+                margin-bottom: 15px;
             }
             
             .eb-product-title {
@@ -707,7 +733,7 @@
             
             button.addEventListener('click', (e) => {
                 e.preventDefault();
-                e.stopPropagation();
+                e.stopPropagation(); // Link'in çalışmasını önle
                 
                 const productCard = button.closest('.eb-product-card');
                 if (!productCard) return;
@@ -723,6 +749,7 @@
         addToCartButtons.forEach(button => {
             button.addEventListener('click', (e) => {
                 e.preventDefault();
+                e.stopPropagation(); // Link'in çalışmasını önle
                 
                 const productCard = button.closest('.eb-product-card');
                 if (!productCard) return;
