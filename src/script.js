@@ -170,6 +170,17 @@
                             ${isDiscounted ? `
                                 <span class="eb-product-original-price">${originalPrice.toFixed(2)} TL</span>
                                 <span class="eb-discount-badge">%${discountAmount}</span>
+                                <span class="eb-discount-arrow-icon">
+                                    <svg viewBox="0 0 16 16" width="16" height="16">
+                                        <circle cx="8" cy="8" r="8" fill="#00A365"/>
+                                        <path d="M8 4.5V10.5 M8 10.5L5 8 M8 10.5L11 8" 
+                                            stroke="white" 
+                                            stroke-width="1" 
+                                            stroke-linecap="round" 
+                                            stroke-linejoin="round"
+                                            fill="none"/>
+                                    </svg>
+                                </span>
                             ` : `
                                 <span style="visibility: hidden;">&nbsp;</span>
                             `}
@@ -423,9 +434,22 @@
                 background: white;
                 color:  #00A365;
                 border-radius: 4px;
-                padding: 2px 6px;
                 font-size: 18px;
                 font-weight: 700;
+                margin: 0 0 0 4.8px;
+            }
+
+            .eb-discount-arrow-icon {
+                display: inline-flex;
+                align-items: center;
+                margin-left: 3px;
+                position: relative;
+            }
+
+            .eb-discount-arrow-icon svg {
+                width: 22px;
+                height: 22px;
+                filter: drop-shadow(0px 1px 1px rgba(0, 0, 0, 0.1));
             }
             
             .eb-favorite-button {
@@ -561,7 +585,6 @@
                 font-size: 13.44px;
                 text-decoration: line-through;
                 color: #7D7D7D;
-                margin-right: 6px;
             }
             
             .eb-add-to-cart-button {
