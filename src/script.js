@@ -105,30 +105,29 @@
             const img = product.img || "https://via.placeholder.com/150";
             const price = typeof product.price !== 'undefined' ? product.price : 0;
             
-            // Fiyat verisi tutarlılık kontrolü
             let originalPrice;
             let isDiscounted = false;
             
             if (typeof product.original_price !== 'undefined') {
-                // Eğer original_price price'dan küçükse veya eşitse (veri hatası)
-                if (product.original_price <= price) {
-                    // Fiyat hatası var - Bu ürün için indirim bilgisi göstermeyelim
-                    originalPrice = price; // Orijinal fiyatı güncel fiyata eşitleyelim 
-                    isDiscounted = false;  // İndirim yok olarak işaretleyelim
+                if (product.original_price < price) {
+                    originalPrice = price;
+                    isDiscounted = false;
                     
                     console.log(`Ürün ID: ${id} için fiyat verisi tutarsızlığı düzeltildi (original_price: ${product.original_price}, price: ${price})`);
-                } else {
-                    // Normal durum - orijinal fiyat güncel fiyattan yüksek (indirim var)
+                } 
+                else if (product.original_price === price) {
+                    originalPrice = price;
+                    isDiscounted = false;
+                }
+                else {
                     originalPrice = product.original_price;
                     isDiscounted = true;
                 }
             } else {
-                // original_price tanımlı değil, varsayılan olarak güncel fiyatı kullan
                 originalPrice = price;
                 isDiscounted = false;
             }
             
-            // İndirim yüzdesini hesapla
             const discountAmount = isDiscounted ? Math.round(100 - (price * 100 / originalPrice)) : 0;
             
             const isFavorite = favorites.includes(id);
